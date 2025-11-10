@@ -1,11 +1,377 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import Layout from "../layouts/Layout.astro";
+import "../styles/global.css";
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const pageTitle = "Astro Todo";
 ---
 
-<Layout>
-	<Welcome />
+<Layout title={pageTitle}>
+  <!-- 🧠 HTML structure -->
+  <section
+    class="max-w-2xl mx-auto p-6 space-y-8 bg-white rounded-2xl shadow-sm border border-gray-300 mt-20"
+  >
+    <!-- Header -->
+    <header
+      class="flex items-center justify-between pb-4 border-b border-slate-100"
+    >
+      <div class="flex items-center gap-3">
+        <div
+          class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center"
+        >
+          <span class="text-white text-lg">📝</span>
+        </div>
+        <div>
+          <h1
+            class="text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent"
+          >
+            Todo List
+          </h1>
+          <p class="text-slate-500 text-sm mt-1">
+            Stay organized and productive
+          </p>
+        </div>
+      </div>
+      <button
+        id="clearCompleted"
+        class="px-4 py-2 text-slate-600 hover:text-red-500 font-medium rounded-lg transition-all duration-200 hover:bg-red-50 border border-transparent hover:border-red-200"
+      >
+        Clear Completed
+      </button>
+    </header>
+
+    <!-- Add Todo Form -->
+    <form id="todoForm" class="flex gap-3" autocomplete="off">
+      <div class="flex-1 relative">
+        <input
+          id="todoInput"
+          type="text"
+          placeholder="What needs to be done?"
+          class="w-full rounded-xl border-2 border-slate-200 bg-white px-4 py-3 pl-12 text-slate-700 placeholder-slate-400 shadow-sm transition-all duration-200 focus:border-indigo-400 focus:outline-none focus:ring-4 focus:ring-indigo-100"
+        />
+        <div class="absolute left-4 top-1/2 transform -translate-y-1/2">
+          <svg
+            class="w-5 h-5 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+          </svg>
+        </div>
+      </div>
+      <button
+        type="submit"
+        class="px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-indigo-200 flex items-center gap-2"
+      >
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Task
+      </button>
+    </form>
+
+    <!-- Todo List -->
+    <div class="bg-slate-50 rounded-xl p-1 min-h-[200px]">
+      <ul id="todoList" class="space-y-2">
+        <!-- Example todo items for demonstration -->
+        <li
+          class="todo-item flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200 hover:border-indigo-200 transition-all duration-200"
+        >
+          <input
+            type="checkbox"
+            class="w-5 h-5 text-indigo-500 rounded border-slate-300 focus:ring-indigo-400"
+          />
+          <span class="flex-1 text-slate-700">Example task - click to edit</span
+          >
+          <button
+            class="p-1 text-slate-400 hover:text-red-500 rounded transition-colors duration-200"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </button>
+        </li>
+
+        <li
+          class="todo-item flex items-center gap-3 p-3 bg-white rounded-lg border border-slate-200 opacity-60"
+        >
+          <input
+            type="checkbox"
+            class="w-5 h-5 text-indigo-500 rounded border-slate-300 focus:ring-indigo-400"
+            checked
+          />
+          <span class="flex-1 text-slate-500 line-through"
+            >Completed task example</span
+          >
+          <button
+            class="p-1 text-slate-400 hover:text-red-500 rounded transition-colors duration-200"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              ></path>
+            </svg>
+          </button>
+        </li>
+      </ul>
+
+      <!-- Empty state -->
+      <div id="emptyState" class="hidden text-center py-12">
+        <div
+          class="w-16 h-16 bg-slate-200 rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            class="w-8 h-8 text-slate-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            ></path>
+          </svg>
+        </div>
+        <p class="text-slate-500 text-lg font-medium">No tasks yet</p>
+        <p class="text-slate-400 text-sm mt-1">
+          Add a task above to get started
+        </p>
+      </div>
+    </div>
+
+    <!-- Footer with Stats and Filters -->
+    <footer
+      class="flex items-center justify-between pt-4 border-t border-slate-100"
+    >
+      <div class="flex items-center gap-4">
+        <span
+          id="leftCount"
+          class="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm font-medium"
+        >
+          0 items left
+        </span>
+        <div class="text-sm text-slate-500">
+          <span id="completedCount">0 completed</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg">
+        <button
+          data-filter="all"
+          class="filterBtn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 bg-white text-indigo-600 shadow-sm"
+        >
+          All
+        </button>
+        <button
+          data-filter="active"
+          class="filterBtn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-slate-600 hover:text-slate-800"
+        >
+          Active
+        </button>
+        <button
+          data-filter="completed"
+          class="filterBtn px-4 py-2 rounded-md text-sm font-medium transition-all duration-200 text-slate-600 hover:text-slate-800"
+        >
+          Completed
+        </button>
+      </div>
+    </footer>
+  </section>
+
+  <style>
+    /* Custom animations and enhancements */
+    .todo-item {
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Smooth transitions for interactive elements */
+    button,
+    input[type="checkbox"] {
+      transition: all 0.2s ease-in-out;
+    }
+
+    /* Focus states for accessibility */
+    input:focus,
+    button:focus {
+      outline: 2px solid transparent;
+      outline-offset: 2px;
+    }
+  </style>
+
+  <!-- 💻 All your JS logic goes inside a <script type="module"> tag -->
+  <script type="module">
+    const LS_KEY = "astro-todos-v1";
+    let todos = [];
+    let filter = "all";
+
+    const $ = (s, sc = document) => sc.querySelector(s);
+    const $$ = (s, sc = document) => Array.from(sc.querySelectorAll(s));
+
+    const listEl = $("#todoList");
+    const inputEl = $("#todoInput");
+    const formEl = $("#todoForm");
+    const leftCountEl = $("#leftCount");
+    const clearBtn = $("#clearCompleted");
+
+    const load = () => {
+      try {
+        todos = JSON.parse(localStorage.getItem(LS_KEY) || "[]");
+      } catch {
+        todos = [];
+      }
+    };
+    const save = () => localStorage.setItem(LS_KEY, JSON.stringify(todos));
+    const uid = () =>
+      Math.random().toString(36).slice(2, 10) +
+      Date.now().toString(36).slice(-4);
+
+    const setFilterUI = () => {
+      $$(".filterBtn").forEach((b) =>
+        b.classList.remove("font-medium", "text-indigo-700")
+      );
+      $(`.filterBtn[data-filter="${filter}"]`)?.classList.add(
+        "font-medium",
+        "text-indigo-700"
+      );
+    };
+
+    const render = () => {
+      setFilterUI();
+      const visible = todos.filter((t) =>
+        filter === "all" ? true : filter === "active" ? !t.done : t.done
+      );
+      listEl.innerHTML = "";
+
+      visible.forEach((todo) => {
+        const li = document.createElement("li");
+        li.className =
+          "group flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 shadow-sm";
+        li.dataset.id = todo.id;
+
+        li.innerHTML = `
+          <input type="checkbox" class="mt-0.5 h-4 w-4" ${todo.done ? "checked" : ""} />
+          <span class="flex-1 select-text ${todo.done ? "line-through text-slate-400" : ""}" contenteditable="true" spellcheck="false"></span>
+          <button class="opacity-0 group-hover:opacity-100 transition text-slate-500 hover:text-red-600" title="Delete" aria-label="Delete">✕</button>
+        `;
+
+        li.querySelector("span").textContent = todo.text;
+
+        // ✅ Toggle
+        li.querySelector("input").addEventListener("change", (e) => {
+          todo.done = e.target.checked;
+          save();
+          update();
+        });
+
+        // ✅ Edit on blur / Enter
+        li.querySelector("span").addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            e.currentTarget.blur();
+          }
+        });
+        li.querySelector("span").addEventListener("blur", (e) => {
+          const v = e.currentTarget.textContent.trim();
+          if (!v) {
+            todos = todos.filter((t) => t.id !== todo.id);
+          } else {
+            todo.text = v;
+          }
+          save();
+          update();
+        });
+
+        // ✅ Delete
+        li.querySelector("button").addEventListener("click", () => {
+          todos = todos.filter((t) => t.id !== todo.id);
+          save();
+          update();
+        });
+
+        listEl.appendChild(li);
+      });
+
+      const left = todos.filter((t) => !t.done).length;
+      leftCountEl.textContent = `${left} item${left === 1 ? "" : "s"} left`;
+    };
+
+    const update = () => render();
+
+    // ✅ Form submit
+    formEl.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const text = inputEl.value.trim();
+      if (!text) return;
+      todos.unshift({ id: uid(), text, done: false });
+      inputEl.value = "";
+      save();
+      update();
+    });
+
+    // ✅ Filters
+    $$(".filterBtn").forEach((btn) =>
+      btn.addEventListener("click", () => {
+        filter = btn.dataset.filter;
+        update();
+      })
+    );
+
+    // ✅ Clear completed
+    clearBtn.addEventListener("click", () => {
+      const before = todos.length;
+      todos = todos.filter((t) => !t.done);
+      if (todos.length !== before) {
+        save();
+        update();
+      }
+    });
+
+    // ✅ Init
+    load();
+    update();
+  </script>
 </Layout>
